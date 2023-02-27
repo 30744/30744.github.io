@@ -56,3 +56,5 @@ for(let navItem of navLinks) {
    console.log(navItem.text);
 });
 }
+
+const zero = 0; 
