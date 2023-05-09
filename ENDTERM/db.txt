@@ -1,0 +1,58 @@
+package main
+
+import (
+	"database/sql"
+	"fmt"
+
+	_ "github.com/go-sql-driver/mysql"
+)
+
+func main() {
+	// Connect to the database
+	db, err := sql.Open("mysql", "user:password@tcp(127.0.0.1:3306)/database_name")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+
+	// Create the Books table
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS Books (
+		ID int,
+		Title string,
+		Author string
+	)`)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	// Create the Category table
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS Category (
+		Id int,
+		Name varchar(255)
+	)`)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	// Create the BookCategory table
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS BookCategory (
+		BookId int,
+		CategoryId int
+	)`)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	// Add foreign key constraints
+	_, err = db.Exec(`ALTER TABLE Category ADD FOREIGN KEY (Id) REFERENCES BookCategory (CategoryId)`)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	_, err = db.Exec(`ALTER TABLE Books ADD FOREIGN KEY (ID) REFERENCES BookCategory (BookId)`)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Println("Tables created successfully")
+}
